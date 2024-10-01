@@ -124,10 +124,10 @@ template <util::AllocType AT = util::AllocType::MALLOC> class RiceBitVector {
 		uint64_t curr_window_unary = 0;
 		uint64_t *curr_ptr_unary;
 		int valid_lower_bits_unary = 0;
-		util::Vector<uint64_t, AT> &data;
+		const util::Vector<uint64_t, AT> &data;
 
 	  public:
-		Reader(util::Vector<uint64_t, AT> &data) : data(data) {}
+		Reader(const util::Vector<uint64_t, AT> &data) : data(data) {}
 
 		uint64_t readNext(const int log2golomb) {
 			uint64_t result = 0;
@@ -184,7 +184,7 @@ template <util::AllocType AT = util::AllocType::MALLOC> class RiceBitVector {
 		}
 	};
 
-	Reader reader() { return Reader(data); }
+	Reader reader() const { return Reader(data); }
 };
 
 } // namespace sux::function

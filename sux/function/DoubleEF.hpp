@@ -226,7 +226,7 @@ template <util::AllocType AT = util::AllocType::MALLOC> class DoubleEF {
 #endif
 	}
 
-	void get(const uint64_t i, uint64_t &cum_keys, uint64_t &cum_keys_next, uint64_t &position) {
+	void get(const uint64_t i, uint64_t &cum_keys, uint64_t &cum_keys_next, uint64_t &position) const {
 		const uint64_t pos_lower = i * (l_cum_keys + l_position);
 		uint64_t lower;
 		memcpy(&lower, (uint8_t *)&lower_bits + pos_lower / 8, 8);
@@ -263,7 +263,7 @@ template <util::AllocType AT = util::AllocType::MALLOC> class DoubleEF {
 		cum_keys_next = ((curr_word_cum_keys * 64 + rho(window_cum_keys) - i - 1) << l_cum_keys | (lower & lower_bits_mask_cum_keys)) + cum_delta + cum_keys_min_delta;
 	}
 
-	void get(const uint64_t i, uint64_t &cum_keys, uint64_t &position) {
+	void get(const uint64_t i, uint64_t &cum_keys, uint64_t &position) const {
 		const uint64_t pos_lower = i * (l_cum_keys + l_position);
 		uint64_t lower;
 		memcpy(&lower, (uint8_t *)&lower_bits + pos_lower / 8, 8);
@@ -294,9 +294,13 @@ template <util::AllocType AT = util::AllocType::MALLOC> class DoubleEF {
 				   int64_t(bits_per_key_fixed_point * cum_keys >> 20);
 	}
 
-	uint64_t bitCountCumKeys() { return (num_buckets + 1) * l_cum_keys + num_buckets + 1 + (u_cum_keys >> l_cum_keys) + jump_size_words() / 2; }
+	uint64_t bitCountCumKeys() const {
+		return (num_buckets + 1) * l_cum_keys + num_buckets + 1 + (u_cum_keys >> l_cum_keys) + jump_size_words() / 2;
+	}
 
-	uint64_t bitCountPosition() { return (num_buckets + 1) * l_position + num_buckets + 1 + (u_position >> l_position) + jump_size_words() / 2; }
+	uint64_t bitCountPosition() const {
+		return (num_buckets + 1) * l_position + num_buckets + 1 + (u_position >> l_position) + jump_size_words() / 2;
+	}
 };
 
 } // namespace sux::function
