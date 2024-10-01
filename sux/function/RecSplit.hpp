@@ -327,7 +327,7 @@ template <size_t LEAF_SIZE, util::AllocType AT = util::AllocType::MALLOC> class 
 	 * 100 to 2000, with smaller buckets giving slightly larger but faster
 	 * functions.
 	 */
-	RecSplit(const vector<string> &keys, const size_t bucket_size) {
+	RecSplit(span<const string> keys, const size_t bucket_size) {
 		this->bucket_size = bucket_size;
 		this->keys_count = keys.size();
 		hash128_t *h = (hash128_t *)malloc(this->keys_count * sizeof(hash128_t));
@@ -341,6 +341,7 @@ template <size_t LEAF_SIZE, util::AllocType AT = util::AllocType::MALLOC> class 
 	/** Builds a RecSplit instance using a given list of 128-bit hashes and bucket size.
 	 *
 	 * **Warning**: duplicate keys will cause this method to never return.
+	 * **Warning**: this method reorders the input keys, which can influence cache locality during query benchmarks.
 	 *
 	 * Note that this constructor is mainly useful for benchmarking.
 	 * @param keys a vector of 128-bit hashes.
@@ -348,7 +349,7 @@ template <size_t LEAF_SIZE, util::AllocType AT = util::AllocType::MALLOC> class 
 	 * 100 to 2000, with smaller buckets giving slightly larger but faster
 	 * functions.
 	 */
-	RecSplit(vector<hash128_t> &keys, const size_t bucket_size) {
+	RecSplit(span<hash128_t> keys, const size_t bucket_size) {
 		this->bucket_size = bucket_size;
 		this->keys_count = keys.size();
 		hash_gen(&keys[0]);
