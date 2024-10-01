@@ -375,7 +375,7 @@ template <size_t LEAF_SIZE, util::AllocType AT = util::AllocType::MALLOC> class 
 	 * @param hash a 128-bit hash.
 	 * @return the associated value.
 	 */
-	size_t operator()(const hash128_t &hash) {
+	size_t operator()(const hash128_t &hash) const {
 		const size_t bucket = hash128_to_bucket(hash);
 		uint64_t cum_keys, cum_keys_next, bit_pos;
 		ef.get(bucket, cum_keys, cum_keys_next, bit_pos);
@@ -431,12 +431,19 @@ template <size_t LEAF_SIZE, util::AllocType AT = util::AllocType::MALLOC> class 
 	 * @param key a key.
 	 * @return the associated value.
 	 */
-	size_t operator()(const string &key) { return operator()(first_hash(key.c_str(), key.size())); }
+	size_t operator()(const string &key) const {
+		return operator()(first_hash(key.c_str(), key.size()));
+	}
 
 	/** Returns the number of keys used to build this RecSplit instance. */
-	inline size_t size() { return this->keys_count; }
+	inline size_t size() const {
+		return this->keys_count;
+	}
 
-	size_t bitCount() { return ef.bitCountCumKeys() + ef.bitCountPosition() + descriptors.getBits() + 8 * sizeof(*this) - 8 * sizeof(descriptors); }
+	size_t bitCount() const {
+		return ef.bitCountCumKeys() + ef.bitCountPosition() + descriptors.getBits()
+				+ 8 * sizeof(*this) - 8 * sizeof(descriptors);
+    }
 
   private:
 	// Maps a 128-bit to a bucket using the first 64-bit half.
